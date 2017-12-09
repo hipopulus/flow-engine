@@ -15,7 +15,7 @@ public class Path {
 
 	@Override
 	public String toString() {
-		return "Path - from: " + from + ", to: " + to;
+		return "Path - " + from + " => " + to;
 	}
 
 	public String getFrom() {

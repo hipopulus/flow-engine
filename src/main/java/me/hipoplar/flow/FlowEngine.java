@@ -36,7 +36,7 @@ public class FlowEngine {
 			PreparedStatement createTable = connection.prepareStatement(
 					// FLOW
 					"DROP TABLE IF EXISTS FLOW; "
-					+ "CREATE TABLE FLOW(name VARCHAR(255) PRIMARY KEY, flowxml VARCHAR(2000), businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT );"
+					+ "CREATE TABLE FLOW(name VARCHAR(255) PRIMARY KEY, flowxml CLOB, businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT );"
 					// ACTIVITY
 					+ "DROP TABLE IF EXISTS ACTIVITY; "
 					+ "CREATE TABLE ACTIVITY(id VARCHAR(255) PRIMARY KEY, flow VARCHAR(255), node VARCHAR(255), operatorId VARCHAR(255), operatorName VARCHAR(255), operatorGroup VARCHAR(255), complete BOOLEAN, createTime DATETIME, updateTime DATETIME, businessId VARCHAR(255), businessName VARCHAR(255));");

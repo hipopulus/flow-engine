@@ -2,6 +2,7 @@ package me.hipoplar.flow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,13 +23,67 @@ public class Flow {
 	private List<Path> paths;
 	private String businessId;
 	private String businessName;
-	private String status;
+	private Integer status;
 	@XmlTransient
 	private FlowContext<?> context;
 
 	@Override
 	public String toString() {
 		return "Flow - name: " + name;
+	}
+	
+	public Flow() { super(); }
+	
+	public static Flow create(String flowName) {
+		Flow flow = new Flow();
+		flow.setName(flowName);
+		flow.setStatus(Flow.FLOW_SATUS_INIT);
+		return flow;
+	}
+	
+	public Node addNode(String name, int type) {
+		Node node = new Node(type, UUID.randomUUID().toString(), name, null);
+		if(nodes == null) nodes = new ArrayList<>();
+		nodes.add(node);
+		return node;
+	}
+	
+	public List<Path> addPaths(String expression, String from, String... tos) {
+		Node n1 = search(from);
+		n1.setExpression(expression);
+		List<Path> pathList = new ArrayList<>();
+		for (String to : tos) {
+			Path path = new Path(from, to);
+			pathList.add(path);
+		}
+		if(paths == null) paths = new ArrayList<>();
+		paths.addAll(pathList);
+		return pathList;
+	}
+	
+	public Node search(String key) {
+		if (nodes == null || nodes.size() == 0 || key == null) {
+			return null;
+		}
+		for (Node node : nodes) {
+			if(key.equals(node.getKey())) {
+				return node;
+			}
+		}
+		return null;
+	}
+	
+	public List<Node> search(int type) {
+		if (nodes == null || nodes.size() == 0) {
+			return null;
+		}
+		List<Node> result = new ArrayList<>();
+		for (Node node : nodes) {
+			if(type == node.getType()) {
+				result.add(node);
+			}
+		}
+		return result.isEmpty() ? null : result;
 	}
 
 	public List<Node> getNodes() {
@@ -79,50 +134,11 @@ public class Flow {
 		this.businessName = businessName;
 	}
 
-	public String getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Integer status) {
 		this.status = status;
-	}
-
-	public String nextKey() {
-		if (nodes == null || nodes.size() == 0) {
-			return "0";
-		}
-		int max = -1;
-		for (Node node : nodes) {
-			int key = Integer.valueOf(node.getKey());
-			if (key > max) {
-				max = key;
-			}
-		}
-		return String.valueOf(max + 1);
-	}
-	
-	public Node search(String key) {
-		if (nodes == null || nodes.size() == 0 || key == null) {
-			return null;
-		}
-		for (Node node : nodes) {
-			if(key.equals(node.getKey())) {
-				return node;
-			}
-		}
-		return null;
-	}
-	
-	public List<Node> search(int type) {
-		if (nodes == null || nodes.size() == 0) {
-			return null;
-		}
-		List<Node> result = new ArrayList<>();
-		for (Node node : nodes) {
-			if(type == node.getType()) {
-				result.add(node);
-			}
-		}
-		return result.isEmpty() ? null : result;
 	}
 }
