@@ -86,9 +86,26 @@ public class ApplicationApp {
 			sample.setVerified(false);
 			flowEngine.process(activity.getId(), context);
 		}
+		
 		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
 		for (Activity activity : activities) {
 			System.out.println(activity);
+			sample.setApplied(true);
+			sample.setName("Jobs");
+			flowEngine.process(activity.getId(), context);
+		}
+		
+		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		for (Activity activity : activities) {
+			System.out.println(activity);
+			System.out.println("Sorry, your application was rejected! Reapply it again, please!");
+			sample.setVerified(true);
+			flowEngine.process(activity.getId(), context);
+		}
+		
+		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		if(activities == null || activities.isEmpty()) {
+			System.out.println("Welcome " + sample.getName() + "!");
 		}
 	}
 }
