@@ -1,13 +1,22 @@
 package me.hipoplar.flow;
 
-public class FlowContext {
-	private Integer maxKey;
+public class FlowContext<T> {
+	private T data;
+	private Operator operator;
 
-	public Integer getMaxKey() {
-		return maxKey;
+	public T getData() {
+		return data;
 	}
 
-	public void setMaxKey(Integer maxKey) {
-		this.maxKey = maxKey;
+	public void setData(T data) {
+		this.data = data;
+	}
+
+	public Operator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(Operator operator) {
+		this.operator = operator;
 	}
 }

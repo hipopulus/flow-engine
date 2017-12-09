@@ -1,15 +1,30 @@
 package me.hipoplar.flow;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 public class Node {
-	private Integer key;
+	public final static int NODE_TYPE_START = 0;
+	public final static int NODE_TYPE_TASK = 1;
+	public final static int NODE_TYPE_GATEWAY = 2;
+	public final static int NODE_TYPE_END = 3;
+	
+	private String key;
 	private String name;
 	private String expression;
+	private Integer type;
+	private List<Operator> operators;
 
 	public Node() {
 		super();
 	}
 
-	public Node(Integer key, String name, String expression) {
+	public Node(Integer type, String key, String name, String expression) {
+		this.type = type;
 		this.key = key;
 		this.name = name;
 		this.expression = expression;
@@ -19,16 +34,41 @@ public class Node {
 	public String toString() {
 		return "Node - key: " + key + ", name: " + name + ", expression: " + expression;
 	}
+	
+	public void addOperator(String operatorId, String operatorName, String operatorGroup) {
+		Operator operator = new Operator();
+		operator.setOperatorId(operatorId);
+		operator.setOperatorName(operatorName);
+		operator.setGroup(operatorGroup);
+		operator.setNode(key);
+		if(operators == null) operators = new ArrayList<>();
+		operators.add(operator);
+	}
 
-	public Integer route(FlowContext context) {
+	public String[] route(FlowContext<?> context) {
+		if(expression != null) {
+			ScriptEngineManager manager = new ScriptEngineManager();
+			ScriptEngine engine = manager.getEngineByName("js");
+			engine.put("context", context.getData());
+			engine.put("operators", operators);
+			engine.put("operator", context.getOperator());
+			try {
+				Object result = engine.eval(expression);
+				if(result != null) {
+					return ((String) result).split(",");
+				}
+			} catch (ScriptException e) {
+				throw new FlowException(e);
+			}
+		}
 		return null;
 	}
 
-	public Integer getKey() {
+	public String getKey() {
 		return key;
 	}
 
-	public void setKey(Integer key) {
+	public void setKey(String key) {
 		this.key = key;
 	}
 
@@ -46,5 +86,21 @@ public class Node {
 
 	public void setExpression(String expression) {
 		this.expression = expression;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public List<Operator> getOperators() {
+		return operators;
+	}
+
+	public void setOperators(List<Operator> operators) {
+		this.operators = operators;
 	}
 }

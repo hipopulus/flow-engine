@@ -1,14 +1,14 @@
 package me.hipoplar.flow;
 
 public class Path {
-	private Integer from;
-	private Integer to;
+	private String from;
+	private String to;
 
 	public Path() {
 		super();
 	}
 
-	public Path(Integer from, Integer to) {
+	public Path(String from, String to) {
 		this.from = from;
 		this.to = to;
 	}
@@ -18,19 +18,19 @@ public class Path {
 		return "Path - from: " + from + ", to: " + to;
 	}
 
-	public Integer getFrom() {
+	public String getFrom() {
 		return from;
 	}
 
-	public void setFrom(Integer from) {
+	public void setFrom(String from) {
 		this.from = from;
 	}
 
-	public Integer getTo() {
+	public String getTo() {
 		return to;
 	}
 
-	public void setTo(Integer to) {
+	public void setTo(String to) {
 		this.to = to;
 	}
 }
