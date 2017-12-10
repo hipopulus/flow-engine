@@ -6,27 +6,31 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "flow")
-@XmlType(propOrder = { "name", "nodes", "paths", "businessId", "businessName", "status" })
+@XmlType(propOrder = { "key", "name", "nodes", "paths", "businessId", "businessName", "status", "instantial" })
 public class Flow {
 	public final static int FLOW_SATUS_INIT = 0;
 	public final static int FLOW_SATUS_PROCESSING = 1;
 	public final static int FLOW_SATUS_COMPLETE = 2;
 	
+	private String key;
 	private String name;
+	@XmlElement(name = "node")
 	private List<Node> nodes;
 	private List<Path> paths;
 	private String businessId;
 	private String businessName;
 	private Integer status;
+	private Boolean instantial;
 
 	@Override
 	public String toString() {
-		return "Flow - name: " + name;
+		return "Flow - key: " + key + ", name: " + name + ", business: " + businessId + " " + businessName;
 	}
 	
 	public Flow() { super(); }
@@ -36,6 +40,12 @@ public class Flow {
 		flow.setName(flowName);
 		flow.setStatus(Flow.FLOW_SATUS_INIT);
 		return flow;
+	}
+	
+	public Flow attachBusiness(String businessId, String businessName) {
+		this.businessId = businessId;
+		this.businessName = businessName;
+		return this;
 	}
 	
 	public Node addNode(String name, int type) {
@@ -164,5 +174,21 @@ public class Flow {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public Boolean getInstantial() {
+		return instantial;
+	}
+
+	public void setInstantial(Boolean instantial) {
+		this.instantial = instantial;
 	}
 }

@@ -3,6 +3,7 @@ package me.hipoplar.flow;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -11,23 +12,23 @@ import javax.xml.bind.Unmarshaller;
 
 import me.hipoplar.flow.api.ActivityService;
 import me.hipoplar.flow.api.DatabaseEngine;
-import me.hipoplar.flow.api.FlowDefService;
+import me.hipoplar.flow.api.FlowService;
 import me.hipoplar.flow.api.GatewayService;
 import me.hipoplar.flow.model.Activity;
 import me.hipoplar.flow.model.Flow;
 import me.hipoplar.flow.model.FlowDef;
 import me.hipoplar.flow.model.Node;
 import me.hipoplar.flow.simple.SimpleActivityService;
-import me.hipoplar.flow.simple.SimpleFlowDefService;
+import me.hipoplar.flow.simple.SimpleFlowService;
 import me.hipoplar.flow.simple.SimpleGatewayService;
 
 public class FlowEngine {
-	protected FlowDefService flowDefService;
+	protected FlowService flowDefService;
 	protected ActivityService activityService;
 	protected GatewayService gatewayService;
 	private FlowEngine(DatabaseEngine databaseEngine) {
 		super();
-		this.flowDefService = new SimpleFlowDefService(databaseEngine);
+		this.flowDefService = new SimpleFlowService(databaseEngine);
 		this.activityService = new SimpleActivityService(databaseEngine);
 		this.gatewayService = new SimpleGatewayService(databaseEngine);
 	}
@@ -36,25 +37,46 @@ public class FlowEngine {
 		return new FlowEngine(databaseEngine);
 	}
 	
-	public final Flow createFLow(Flow flow) {
-		if (flow.getName() == null || flow.getName().trim().length() == 0) {
-			throw new FlowException("Flow name not specified.");
-		}
-		FlowDef flowDef = new FlowDef();
-		flowDef.setName(flow.getName());
-		flowDef.setBusinessId(flow.getBusinessId());
-		flowDef.setBusinessName(flow.getBusinessName());
-		flowDef.setStatus(flow.getStatus());
-		flowDef.setFlowxml(toXml(flow));
-		getFlowDefService().createFLow(flowDef);
-		return flow;
-	}
-
-	public final Flow getFlow(String name) {
+	public final Flow instance(String definitionKey, String name) {
 		if (name == null || name.trim().length() == 0) {
 			throw new FlowException("Flow name not specified.");
 		}
-		FlowDef flowDef = getFlowDefService().getFlow(name);
+		Flow flow = getFlow(definitionKey);
+		if(flow == null) {
+			throw new FlowException("Flow definition not found.");
+		}
+		flow.setKey(UUID.randomUUID().toString());
+		flow.setInstantial(true);
+		getFlowDefService().createFLow(flow, toXml(flow));
+		return flow;
+	}
+	
+	public final Flow instance(Flow flow, String name) {
+		if (name == null || name.trim().length() == 0) {
+			throw new FlowException("Flow name not specified.");
+		}
+		flow.setName(name);
+		flow.setKey(UUID.randomUUID().toString());
+		flow.setInstantial(true);
+		getFlowDefService().createFLow(flow, toXml(flow));
+		return flow;
+	}
+	
+	public final Flow define(Flow flow) {
+		if (flow.getName() == null || flow.getName().trim().length() == 0) {
+			throw new FlowException("Flow name not specified.");
+		}
+		flow.setKey(UUID.randomUUID().toString());
+		flow.setInstantial(false);
+		getFlowDefService().createFLow(flow, toXml(flow));
+		return flow;
+	}
+
+	public final Flow getFlow(String key) {
+		if (key == null || key.trim().length() == 0) {
+			throw new FlowException("Flow key not specified.");
+		}
+		FlowDef flowDef = getFlowDefService().getFlow(key);
 		Flow flow = null;
 		if(flowDef != null) {
 			flow = toJavaObject(flowDef.getFlowxml());
@@ -62,10 +84,10 @@ public class FlowEngine {
 		return flow;
 	}
 
-	public final void start(String flowName, FlowContext<?> context) {
-		Flow flow = getFlow(flowName);
+	public final void start(String key, FlowContext<?> context) {
+		Flow flow = getFlow(key);
 		if (flow == null) {
-			throw new FlowException("Flow name not specified.");
+			throw new FlowException("Flow key not specified.");
 		}
 		Node start = flow.search(Node.NODE_TYPE_START).get(0);
 		String[] nextNodes = start.route(context);
@@ -174,7 +196,7 @@ public class FlowEngine {
 	}
 	
 
-	protected FlowDefService getFlowDefService() {
+	protected FlowService getFlowDefService() {
 		return flowDefService;
 	}
 

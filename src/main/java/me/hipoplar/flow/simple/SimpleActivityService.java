@@ -115,7 +115,7 @@ public class SimpleActivityService implements ActivityService {
 				activity.setBusinessName(flow.getBusinessName());
 				activity.setComplete(false);
 				activity.setCreateTime(new Date());
-				activity.setFlow(flow.getName());
+				activity.setFlow(flow.getKey());
 				activity.setNode(node.getKey());
 				activity.setOperatorGroup(operator.getGroup());
 				activity.setOperatorId(operator.getOperatorId());

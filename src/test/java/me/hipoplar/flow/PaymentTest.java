@@ -64,14 +64,13 @@ public class PaymentTest extends TestCase {
 		// Create engine
 		FlowEngine flowEngine = FlowEngine.createEngine(new SimpleDataBaseEngine());
 		// Create flow
-		flowEngine.createFLow(flow);
-		Flow result = flowEngine.getFlow(flow.getName());
-		System.out.println(result);
-		for (Node node : result.getNodes()) {
+		Flow instance = flowEngine.instance(flow, "A Payment Sample");
+		System.out.println(instance);
+		for (Node node : instance.getNodes()) {
 			System.out.println(node);
 		}
 
-		for (Path path : result.getPaths()) {
+		for (Path path : instance.getPaths()) {
 			System.out.println(path);
 		}
 		System.out.println("====================================================================================");
@@ -94,16 +93,16 @@ public class PaymentTest extends TestCase {
 		context.setOperator(operator);
 		// Start flow
 		System.out.println("Starting flow...");
-		flowEngine.start(flow.getName(), context);
+		flowEngine.start(flow.getKey(), context);
 		// Submit
 		System.out.println("Submiting...");
-		List<Activity> activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		List<Activity> activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			sample.setApplied(true);
 			flowEngine.process(activity.getId(), context);
 		}
 		// Reject and Pay
-		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			if(activity.getName().equals("Verify")) {
 				System.out.println("Rejecting...");
@@ -117,7 +116,7 @@ public class PaymentTest extends TestCase {
 		System.out.println("Opps! Your application was rejected! Please resubmit it again!");
 		// Resubmit
 		System.out.println("Resubmiting form...");
-		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			sample.setApplied(true);
 			sample.setName("Jobs");
@@ -125,7 +124,7 @@ public class PaymentTest extends TestCase {
 		}
 		// Verify
 		System.out.println("Verifying...");
-		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			if(activity.getName().equals("Verify")) {
 				System.out.println("Verifying...");
@@ -137,7 +136,7 @@ public class PaymentTest extends TestCase {
 			flowEngine.process(activity.getId(), context);
 		}
 
-		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		if (activities == null || activities.isEmpty()) {
 			System.out.println("Welcome to join us, enjoy it!");
 		}

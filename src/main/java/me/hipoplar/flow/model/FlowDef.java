@@ -2,11 +2,19 @@ package me.hipoplar.flow.model;
 
 public class FlowDef {
 
+	private String key;
 	private String name;
 	private String businessId;
 	private String businessName;
 	private Integer status;
 	private String flowxml;
+	private Boolean instantial;
+	public String getKey() {
+		return key;
+	}
+	public void setKey(String key) {
+		this.key = key;
+	}
 	public String getName() {
 		return name;
 	}
@@ -36,5 +44,11 @@ public class FlowDef {
 	}
 	public void setFlowxml(String flowxml) {
 		this.flowxml = flowxml;
+	}
+	public Boolean getInstantial() {
+		return instantial;
+	}
+	public void setInstantial(Boolean instantial) {
+		this.instantial = instantial;
 	}
 }

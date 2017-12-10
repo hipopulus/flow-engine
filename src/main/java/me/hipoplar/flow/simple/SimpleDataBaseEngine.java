@@ -16,7 +16,7 @@ public class SimpleDataBaseEngine implements DatabaseEngine {
 			PreparedStatement createTable = connection.prepareStatement(
 					// FLOW
 					"DROP TABLE IF EXISTS FLOW; "
-					+ "CREATE TABLE FLOW(name VARCHAR(255) PRIMARY KEY, flowxml CLOB, businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT);"
+					+ "CREATE TABLE FLOW(key VARCHAR(255) PRIMARY KEY, name VARCHAR(255), flowxml CLOB, businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT, instantial TINYINT);"
 					// JOINED_NODE
 					+ "DROP TABLE IF EXISTS JOINED_NODE; "
 					+ "CREATE TABLE JOINED_NODE(gateway VARCHAR(255), joinedNode VARCHAR(255));"
@@ -39,7 +39,5 @@ public class SimpleDataBaseEngine implements DatabaseEngine {
 	public Connection getConnection() {
 		return h2Engine.getConnection();
 	}
-	
-	
 
 }

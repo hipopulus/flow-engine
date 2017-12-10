@@ -49,14 +49,14 @@ public class ApplicationTest extends TestCase {
 		// Create engine
 		FlowEngine flowEngine = FlowEngine.createEngine(new SimpleDataBaseEngine());
 		// Create flow
-		flowEngine.createFLow(flow);
-		Flow result = flowEngine.getFlow(flow.getName());
-		System.out.println(result);
-		for (Node node : result.getNodes()) {
+		Flow definition = flowEngine.define(flow);
+		Flow instance = flowEngine.instance(definition.getKey(), "A Application Sample");
+		System.out.println(instance);
+		for (Node node : instance.getNodes()) {
 			System.out.println(node);
 		}
 
-		for (Path path : result.getPaths()) {
+		for (Path path : instance.getPaths()) {
 			System.out.println(path);
 		}
 		System.out.println("====================================================================================");
@@ -78,17 +78,17 @@ public class ApplicationTest extends TestCase {
 		context.setOperator(operator);
 		// Start flow
 		System.out.println("Starting flow...");
-		flowEngine.start(flow.getName(), context);
+		flowEngine.start(flow.getKey(), context);
 		// Submit
 		System.out.println("Submiting form...");
-		List<Activity> activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		List<Activity> activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			sample.setApplied(true);
 			flowEngine.process(activity.getId(), context);
 		}
 		// Reject
 		System.out.println("Rejecting application...");
-		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			sample.setVerified(false);
 			flowEngine.process(activity.getId(), context);
@@ -96,7 +96,7 @@ public class ApplicationTest extends TestCase {
 		System.out.println("Opps! Your application was rejected! Please resubmit it again!");
 		// Resubmit
 		System.out.println("Resubmiting form...");
-		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			sample.setApplied(true);
 			sample.setName("Jobs");
@@ -104,7 +104,7 @@ public class ApplicationTest extends TestCase {
 		}
 		// Verify
 		System.out.println("Verifying...");
-		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
+		activities = flowEngine.getFlowActivities(flow.getKey(), operatorId);
 		for (Activity activity : activities) {
 			sample.setVerified(true);
 			flowEngine.process(activity.getId(), context);
