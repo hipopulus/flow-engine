@@ -1,5 +1,7 @@
 package me.hipoplar.flow;
 
+import me.hipoplar.flow.model.Operator;
+
 public class FlowContext<T> {
 	private T data;
 	private Operator operator;

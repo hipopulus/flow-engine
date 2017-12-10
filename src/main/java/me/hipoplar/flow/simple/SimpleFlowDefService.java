@@ -5,11 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import me.hipoplar.flow.DatabaseEngine;
-import me.hipoplar.flow.Flow;
-import me.hipoplar.flow.FlowDef;
-import me.hipoplar.flow.FlowDefService;
 import me.hipoplar.flow.FlowException;
+import me.hipoplar.flow.api.DatabaseEngine;
+import me.hipoplar.flow.api.FlowDefService;
+import me.hipoplar.flow.model.Flow;
+import me.hipoplar.flow.model.FlowDef;
 
 public class SimpleFlowDefService implements FlowDefService {
 	private DatabaseEngine databaseEngine;

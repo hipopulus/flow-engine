@@ -4,16 +4,12 @@ import java.util.List;
 import java.util.UUID;
 
 import junit.framework.TestCase;
-import me.hipoplar.flow.Activity;
-import me.hipoplar.flow.Expression;
-import me.hipoplar.flow.Flow;
-import me.hipoplar.flow.FlowContext;
-import me.hipoplar.flow.FlowEngine;
-import me.hipoplar.flow.Node;
-import me.hipoplar.flow.Operator;
-import me.hipoplar.flow.Path;
+import me.hipoplar.flow.model.Activity;
+import me.hipoplar.flow.model.Flow;
+import me.hipoplar.flow.model.Node;
+import me.hipoplar.flow.model.Operator;
+import me.hipoplar.flow.model.Path;
 import me.hipoplar.flow.simple.SimpleDataBaseEngine;
-import me.hipoplar.flow.simple.SimpleFlowEngine;
 
 public class PaymentTest extends TestCase {
 	public void test() {
@@ -66,7 +62,7 @@ public class PaymentTest extends TestCase {
 		/* =====================================================================================================*/
 		
 		// Create engine
-		FlowEngine flowEngine = new SimpleFlowEngine(new SimpleDataBaseEngine());
+		FlowEngine flowEngine = FlowEngine.createEngine(new SimpleDataBaseEngine());
 		// Create flow
 		flowEngine.createFLow(flow);
 		Flow result = flowEngine.getFlow(flow.getName());

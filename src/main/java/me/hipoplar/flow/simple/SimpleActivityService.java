@@ -9,13 +9,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import me.hipoplar.flow.Activity;
-import me.hipoplar.flow.ActivityService;
-import me.hipoplar.flow.DatabaseEngine;
-import me.hipoplar.flow.Flow;
 import me.hipoplar.flow.FlowException;
-import me.hipoplar.flow.Node;
-import me.hipoplar.flow.Operator;
+import me.hipoplar.flow.api.ActivityService;
+import me.hipoplar.flow.api.DatabaseEngine;
+import me.hipoplar.flow.model.Activity;
+import me.hipoplar.flow.model.Flow;
+import me.hipoplar.flow.model.Node;
+import me.hipoplar.flow.model.Operator;
 
 public class SimpleActivityService implements ActivityService {
 

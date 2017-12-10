@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.hipoplar.flow.DatabaseEngine;
-import me.hipoplar.flow.GatewayService;
-import me.hipoplar.flow.Node;
+import me.hipoplar.flow.api.DatabaseEngine;
+import me.hipoplar.flow.api.GatewayService;
+import me.hipoplar.flow.model.Node;
 
 public class SimpleGatewayService implements GatewayService {
 	

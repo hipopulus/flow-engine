@@ -1,4 +1,4 @@
-package me.hipoplar.flow;
+package me.hipoplar.flow.model;
 
 public class Operator {
 	public final static String GROUP_ANY = "Any";

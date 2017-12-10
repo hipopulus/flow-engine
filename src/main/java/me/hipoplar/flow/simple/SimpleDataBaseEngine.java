@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import me.hipoplar.flow.DatabaseEngine;
+import me.hipoplar.flow.api.DatabaseEngine;
 
 public class SimpleDataBaseEngine implements DatabaseEngine {
 	private H2Engine h2Engine;

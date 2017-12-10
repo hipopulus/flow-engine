@@ -1,4 +1,4 @@
-package me.hipoplar.flow;
+package me.hipoplar.flow.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import me.hipoplar.flow.FlowContext;
+import me.hipoplar.flow.FlowException;
 
 public class Node {
 	public final static int NODE_TYPE_START = 0;

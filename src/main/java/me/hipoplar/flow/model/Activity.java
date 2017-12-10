@@ -1,4 +1,4 @@
-package me.hipoplar.flow;
+package me.hipoplar.flow.model;
 
 import java.util.Date;
 

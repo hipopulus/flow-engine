@@ -9,7 +9,32 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-public abstract class FlowEngine {
+import me.hipoplar.flow.api.ActivityService;
+import me.hipoplar.flow.api.DatabaseEngine;
+import me.hipoplar.flow.api.FlowDefService;
+import me.hipoplar.flow.api.GatewayService;
+import me.hipoplar.flow.model.Activity;
+import me.hipoplar.flow.model.Flow;
+import me.hipoplar.flow.model.FlowDef;
+import me.hipoplar.flow.model.Node;
+import me.hipoplar.flow.simple.SimpleActivityService;
+import me.hipoplar.flow.simple.SimpleFlowDefService;
+import me.hipoplar.flow.simple.SimpleGatewayService;
+
+public class FlowEngine {
+	protected FlowDefService flowDefService;
+	protected ActivityService activityService;
+	protected GatewayService gatewayService;
+	private FlowEngine(DatabaseEngine databaseEngine) {
+		super();
+		this.flowDefService = new SimpleFlowDefService(databaseEngine);
+		this.activityService = new SimpleActivityService(databaseEngine);
+		this.gatewayService = new SimpleGatewayService(databaseEngine);
+	}
+	
+	public static FlowEngine createEngine(DatabaseEngine databaseEngine) {
+		return new FlowEngine(databaseEngine);
+	}
 	
 	public final Flow createFLow(Flow flow) {
 		if (flow.getName() == null || flow.getName().trim().length() == 0) {
@@ -148,10 +173,17 @@ public abstract class FlowEngine {
 		}
 	}
 	
-	public abstract FlowDefService getFlowDefService();
 
-	public abstract ActivityService getActivityService();
+	protected FlowDefService getFlowDefService() {
+		return flowDefService;
+	}
 
-	public abstract GatewayService getGatewayService();
+	public ActivityService getActivityService() {
+		return activityService;
+	}
+
+	public GatewayService getGatewayService() {
+		return gatewayService;
+	}
 
 }
