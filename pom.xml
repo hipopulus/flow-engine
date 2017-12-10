@@ -16,10 +16,11 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>me.hipoplar</groupId>
-			<artifactId>h2-engine</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.195</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

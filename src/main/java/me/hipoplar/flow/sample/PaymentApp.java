@@ -14,7 +14,7 @@ import me.hipoplar.flow.Path;
 import me.hipoplar.flow.simple.SimpleDataBaseEngine;
 import me.hipoplar.flow.simple.SimpleFlowEngine;
 
-public class ApplicationApp {
+public class PaymentApp {
 	public static void main(String[] args) {
 		/* =====================================================================================================*/
 		System.out.println("Defining flow...");
@@ -29,24 +29,39 @@ public class ApplicationApp {
 		// Application node
 		Node application = flow.addNode("Apply", Node.NODE_TYPE_TASK);
 		application.addOperator(operatorId, operatorName, operatorGroup);
+		// Payment node
+		Node payment = flow.addNode("Pay", Node.NODE_TYPE_TASK);
+		payment.addOperator(operatorId, operatorName, operatorGroup);
 		// Verification node
 		Node verification = flow.addNode("Verify", Node.NODE_TYPE_TASK);
 		verification.addOperator(operatorId, operatorName, operatorGroup);
+		// Parallel gateway
+		Node parallel = flow.addNode("Parallel Gateway", Node.NODE_TYPE_GATEWAY_PARALLEL);
+		parallel.addOperator(operatorId, operatorName, operatorGroup);
+		// Join gateway
+		Node join = flow.addNode("Join Gateway", Node.NODE_TYPE_GATEWAY_JOIN);
+		join.addOperator(operatorId, operatorName, operatorGroup);
 		// Verification gateway
-		Node gateway = flow.addNode("Verification Gateway", Node.NODE_TYPE_GATEWAY_EXCLUSIVE);
-		gateway.addOperator(operatorId, operatorName, operatorGroup);
+		Node check = flow.addNode("Verification Gateway", Node.NODE_TYPE_GATEWAY_EXCLUSIVE);
+		check.addOperator(operatorId, operatorName, operatorGroup);
 		// End node
 		Node end = flow.addNode("End", Node.NODE_TYPE_END);
 		end.addOperator(operatorId, operatorName, operatorGroup);
 		// From Start to Application
 		flow.direct(start.getKey(), application.getKey());
-		// From Application to Verification
-		flow.direct(application.getKey(), verification.getKey());
-		// From Verification to Gateway
-		flow.direct(verification.getKey(), gateway.getKey());
-		// Gateway back to Application or to End
-		Expression verifyExpression = new Expression().iF("context.verified").then(end.getKey()).elseThen(application.getKey());
-		flow.exclude(verifyExpression.build(), gateway.getKey(), application.getKey(), end.getKey());
+		// From Application to Parallel
+		flow.direct(application.getKey(), parallel.getKey());
+		// From Parallel gateway to Payment and Verification
+		flow.parallel(parallel.getKey(), payment.getKey(), verification.getKey());
+		// From Verification to Check
+		flow.direct(verification.getKey(), check.getKey());
+		// From Check to Application or to Join
+		Expression verifyExpression = new Expression().iF("context.verified").then(join.getKey()).elseThen(application.getKey());
+		flow.exclude(verifyExpression.build(), check.getKey(), application.getKey(), join.getKey());
+		// Join
+		flow.join(join.getKey(), check.getKey(), payment.getKey());
+		// From Join to End
+		flow.direct(join.getKey(), end.getKey());
 		/* =====================================================================================================*/
 		
 		// Create engine
@@ -67,11 +82,12 @@ public class ApplicationApp {
 		System.out.println("Preparing application form...");
 		FlowContext<Application> context = new FlowContext<>();
 		Application sample = new Application();
-		sample.setApplied(true);
+		sample.setApplied(false);
 		sample.setId(UUID.randomUUID().toString());
 		sample.setMobile("18600000000");
 		sample.setName("Lisa");
 		sample.setVerified(false);
+		sample.setPaid(false);
 		context.setData(sample);
 		Operator operator = new Operator();
 		operator.setGroup(operatorGroup);
@@ -83,17 +99,22 @@ public class ApplicationApp {
 		System.out.println("Starting flow...");
 		flowEngine.start(flow.getName(), context);
 		// Submit
-		System.out.println("Submiting form...");
+		System.out.println("Submiting...");
 		List<Activity> activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
 		for (Activity activity : activities) {
 			sample.setApplied(true);
 			flowEngine.process(activity.getId(), context);
 		}
-		// Reject
-		System.out.println("Rejecting application...");
+		// Reject and Pay
 		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
 		for (Activity activity : activities) {
-			sample.setVerified(false);
+			if(activity.getName().equals("Verify")) {
+				System.out.println("Rejecting...");
+				sample.setVerified(false);
+			} else if(activity.getName().equals("Pay")) {
+				System.out.println("Paying...");
+				sample.setPaid(true);
+			}
 			flowEngine.process(activity.getId(), context);
 		}
 		System.out.println("Opps! Your application was rejected! Please resubmit it again!");
@@ -109,7 +130,13 @@ public class ApplicationApp {
 		System.out.println("Verifying...");
 		activities = flowEngine.getFlowActivities(flow.getName(), operatorId);
 		for (Activity activity : activities) {
-			sample.setVerified(true);
+			if(activity.getName().equals("Verify")) {
+				System.out.println("Verifying...");
+				sample.setVerified(true);
+			} else if(activity.getName().equals("Pay")) {
+				System.out.println("Paying...");
+				sample.setPaid(true);
+			}
 			flowEngine.process(activity.getId(), context);
 		}
 

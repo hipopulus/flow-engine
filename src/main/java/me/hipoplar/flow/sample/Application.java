@@ -6,6 +6,7 @@ public class Application {
 	private String mobile;
 	private Boolean applied;
 	private Boolean verified;
+	private Boolean paid;
 	public String getId() {
 		return id;
 	}
@@ -35,5 +36,11 @@ public class Application {
 	}
 	public void setVerified(Boolean verified) {
 		this.verified = verified;
+	}
+	public Boolean getPaid() {
+		return paid;
+	}
+	public void setPaid(Boolean paid) {
+		this.paid = paid;
 	}
 }

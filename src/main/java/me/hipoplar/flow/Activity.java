@@ -4,10 +4,11 @@ import java.util.Date;
 
 public class Activity {
 	private String id;
+	private String name;
 	private String flow;
 	private String node;
 	private String operatorId;
-	private String operatorGorup;
+	private String operatorGroup;
 	private String operatorName;
 	private Boolean complete;
 	private Date createTime;
@@ -17,7 +18,7 @@ public class Activity {
 	
 	@Override
 	public String toString() {
-		return "Activity - id: " + id + ", node: " + node + ", complete: " + complete;
+		return "Activity - " + name + ": " + id + ", node: " + node + ", complete: " + complete;
 	}
 	public String getId() {
 		return id;
@@ -79,10 +80,16 @@ public class Activity {
 	public void setBusinessName(String businessName) {
 		this.businessName = businessName;
 	}
-	public String getOperatorGorup() {
-		return operatorGorup;
+	public String getOperatorGroup() {
+		return operatorGroup;
 	}
-	public void setOperatorGorup(String operatorGorup) {
-		this.operatorGorup = operatorGorup;
+	public void setOperatorGroup(String operatorGroup) {
+		this.operatorGroup = operatorGroup;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 }

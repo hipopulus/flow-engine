@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -24,8 +23,6 @@ public class Flow {
 	private String businessId;
 	private String businessName;
 	private Integer status;
-	@XmlTransient
-	private FlowContext<?> context;
 
 	@Override
 	public String toString() {
@@ -50,10 +47,12 @@ public class Flow {
 	
 	public Path direct(String from, String to) {
 		Node n1 = search(from);
-		n1.setExpression(to);
 		Path path = new Path(from, to);
-		if(paths == null) paths = new ArrayList<>();
-		paths.add(path);
+		if(n1.getType() != Node.NODE_TYPE_GATEWAY_EXCLUSIVE) {
+			n1.setExpression(to);
+			if(paths == null) paths = new ArrayList<>();
+			paths.add(path);
+		}
 		return path;
 	}
 	
@@ -87,19 +86,6 @@ public class Flow {
 		List<Path> pathList = new ArrayList<>();
 		for (String from : froms) {
 			Path path = direct(from, to);
-			pathList.add(path);
-		}
-		if(paths == null) paths = new ArrayList<>();
-		paths.addAll(pathList);
-		return pathList;
-	}
-	
-	public List<Path> addPaths(String expression, String from, String... tos) {
-		Node n1 = search(from);
-		n1.setExpression(expression);
-		List<Path> pathList = new ArrayList<>();
-		for (String to : tos) {
-			Path path = new Path(from, to);
 			pathList.add(path);
 		}
 		if(paths == null) paths = new ArrayList<>();
@@ -146,14 +132,6 @@ public class Flow {
 
 	public void setPaths(List<Path> paths) {
 		this.paths = paths;
-	}
-
-	public FlowContext<?> getContext() {
-		return context;
-	}
-
-	public void setContext(FlowContext<?> context) {
-		this.context = context;
 	}
 
 	public String getName() {
