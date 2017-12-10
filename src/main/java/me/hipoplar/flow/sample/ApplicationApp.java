@@ -14,11 +14,10 @@ import me.hipoplar.flow.Path;
 
 public class ApplicationApp {
 	public static void main(String[] args) {
+		/* =====================================================================================================*/
 		System.out.println("Defining flow...");
 		Flow flow = new Flow();
-
 		flow.setName("Application Flow");
-
 		String operatorId = "1001";
 		String operatorName = "Vincent";
 		String operatorGroup = "ANY";
@@ -29,19 +28,25 @@ public class ApplicationApp {
 		Node application = flow.addNode("Apply", Node.NODE_TYPE_TASK);
 		application.addOperator(operatorId, operatorName, operatorGroup);
 		// Verification node
-		Node verification = flow.addNode("Verify", Node.NODE_TYPE_GATEWAY);
+		Node verification = flow.addNode("Verify", Node.NODE_TYPE_TASK);
 		verification.addOperator(operatorId, operatorName, operatorGroup);
+		// Verification gateway
+		Node gateway = flow.addNode("Verification Gateway", Node.NODE_TYPE_GATEWAY_EXCLUSIVE);
+		gateway.addOperator(operatorId, operatorName, operatorGroup);
 		// End node
 		Node end = flow.addNode("End", Node.NODE_TYPE_END);
 		end.addOperator(operatorId, operatorName, operatorGroup);
-		// Start to Application
-		flow.addPaths(new Expression(application.getKey()).build(), start.getKey(), application.getKey());
-		// Application to Verification
-		Expression applyExpression = new Expression().iF("context.applied").then(verification.getKey()).elseThen(application.getKey());
-		flow.addPaths(applyExpression.build(), application.getKey(), verification.getKey());
-		// Verification to End and Verification back to Application
+		// From Start to Application
+		flow.direct(start.getKey(), application.getKey());
+		// From Application to Verification
+		flow.direct(application.getKey(), verification.getKey());
+		// From Verification to Gateway
+		flow.direct(verification.getKey(), gateway.getKey());
+		// Gateway back to Application or to End
 		Expression verifyExpression = new Expression().iF("context.verified").then(end.getKey()).elseThen(application.getKey());
-		flow.addPaths(verifyExpression.build(), verification.getKey(), application.getKey(), end.getKey());
+		flow.exclude(verifyExpression.build(), gateway.getKey(), application.getKey(), end.getKey());
+		/* =====================================================================================================*/
+		
 		// Create engine
 		FlowEngine flowEngine = FlowEngine.createEngine();
 		// Create flow

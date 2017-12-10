@@ -48,6 +48,52 @@ public class Flow {
 		return node;
 	}
 	
+	public Path direct(String from, String to) {
+		Node n1 = search(from);
+		n1.setExpression(to);
+		Path path = new Path(from, to);
+		if(paths == null) paths = new ArrayList<>();
+		paths.add(path);
+		return path;
+	}
+	
+	public List<Path> exclude(String expression, String from, String... tos) {
+		Node n1 = search(from);
+		n1.setExpression(expression);
+		List<Path> pathList = new ArrayList<>();
+		for (String to : tos) {
+			Path path = new Path(from, to);
+			pathList.add(path);
+		}
+		if(paths == null) paths = new ArrayList<>();
+		paths.addAll(pathList);
+		return pathList;
+	}
+	
+	public List<Path> parallel(String from, String...tos) {
+		Node n1 = search(from);
+		n1.setExpression(String.join(",", tos));
+		List<Path> pathList = new ArrayList<>();
+		for (String to : tos) {
+			Path path = new Path(from, to);
+			pathList.add(path);
+		}
+		if(paths == null) paths = new ArrayList<>();
+		paths.addAll(pathList);
+		return pathList;
+	}
+	
+	public List<Path> join(String to, String... froms) {
+		List<Path> pathList = new ArrayList<>();
+		for (String from : froms) {
+			Path path = direct(from, to);
+			pathList.add(path);
+		}
+		if(paths == null) paths = new ArrayList<>();
+		paths.addAll(pathList);
+		return pathList;
+	}
+	
 	public List<Path> addPaths(String expression, String from, String... tos) {
 		Node n1 = search(from);
 		n1.setExpression(expression);

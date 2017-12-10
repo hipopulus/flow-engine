@@ -1,6 +1,11 @@
 package me.hipoplar.flow;
 
 public class Operator {
+	public final static String GROUP_ANY = "Any";
+	public final static String GROUP_PERSONAL = "PERSONAL";
+	public final static String GROUP_CORPORATE = "CORPORATE";
+	public final static String GROUP_DEPARTMENT = "DEPARTMENT";
+	
 	private String node;
 	private String operatorId;
 	private String operatorName;

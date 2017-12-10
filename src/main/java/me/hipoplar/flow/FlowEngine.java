@@ -8,7 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
@@ -36,7 +38,10 @@ public class FlowEngine {
 			PreparedStatement createTable = connection.prepareStatement(
 					// FLOW
 					"DROP TABLE IF EXISTS FLOW; "
-					+ "CREATE TABLE FLOW(name VARCHAR(255) PRIMARY KEY, flowxml CLOB, businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT );"
+					+ "CREATE TABLE FLOW(name VARCHAR(255) PRIMARY KEY, flowxml CLOB, businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT);"
+					// JOINED_NODE
+					+ "DROP TABLE IF EXISTS JOINED_NODE; "
+					+ "CREATE TABLE JOINED_NODE(gateway VARCHAR(255) PRIMARY KEY, joinedNode VARCHAR(255));"
 					// ACTIVITY
 					+ "DROP TABLE IF EXISTS ACTIVITY; "
 					+ "CREATE TABLE ACTIVITY(id VARCHAR(255) PRIMARY KEY, flow VARCHAR(255), node VARCHAR(255), operatorId VARCHAR(255), operatorName VARCHAR(255), operatorGroup VARCHAR(255), complete BOOLEAN, createTime DATETIME, updateTime DATETIME, businessId VARCHAR(255), businessName VARCHAR(255));");
@@ -122,6 +127,37 @@ public class FlowEngine {
 			createActivity(flow, nodeKey);
 		}
 	}
+	
+	private void flowTo(Flow flow, Node from, Node to, FlowContext<?> context) {
+		if(to.getType() == Node.NODE_TYPE_GATEWAY_JOIN) {
+			join(to, from);
+			if(isJoined(to)) {
+				return;
+			}
+		}
+		String[] nextNodes = null;
+		switch (to.getType()) {
+		case Node.NODE_TYPE_START:
+		case Node.NODE_TYPE_GATEWAY_EXCLUSIVE:
+		case Node.NODE_TYPE_GATEWAY_PARALLEL:
+		case Node.NODE_TYPE_GATEWAY_JOIN:
+			nextNodes = to.route(context);
+			if(nextNodes != null) {
+				for (String nextNodeKey : nextNodes) {
+					if(!nextNodeKey.trim().equals(to.getKey().trim())) {
+						Node nextNode = flow.search(nextNodeKey); 
+						flowTo(flow, to, nextNode, context);
+					}
+				}
+			}
+			break;
+		case Node.NODE_TYPE_TASK:
+			createNodeActivity(flow, to);
+			break;
+		default:
+			break;
+		}
+	}
 
 	public void process(String activityId, FlowContext<?> context) {
 		Activity activity = getActivity(activityId);
@@ -142,11 +178,59 @@ public class FlowEngine {
 				return;
 			}
 		}
-		if(!completeActivity(activityId, context.getOperator().getOperatorId(), context.getOperator().getOperatorName())) {
+		if(!completeActivity(node.getKey(), context.getOperator().getOperatorId(), context.getOperator().getOperatorName())) {
 			throw new FlowException("Complete activity error.");
 		}
-		for (String nodeKey : nextNodes) {
-			createActivity(flow, nodeKey);
+		for (String nextNodeKey : nextNodes) {
+			Node nextNode = flow.search(nextNodeKey);
+			flowTo(flow, node, nextNode, context);
+		}
+	}
+	
+	private List<Activity> createNodeActivity(Flow flow, Node node) {
+		if(node.getType() == Node.NODE_TYPE_TASK) {
+			List<Activity> activities = new ArrayList<>();
+			for (Operator operator : node.getOperators()) {
+				Activity activity = new Activity();
+				activity.setId(UUID.randomUUID().toString());
+				activity.setBusinessId(flow.getBusinessId());
+				activity.setBusinessName(flow.getBusinessName());
+				activity.setComplete(false);
+				activity.setCreateTime(new Date());
+				activity.setFlow(flow.getName());
+				activity.setNode(node.getKey());
+				activity.setOperatorGorup(operator.getGroup());
+				activity.setOperatorId(operator.getOperatorId());
+				activity.setOperatorName(operator.getOperatorName());
+				Connection connection = h2Engine.getConnection();
+				try {
+					PreparedStatement stmt = connection.prepareStatement("INSERT INTO ACTIVITY(id, flow, node, operatorId, operatorGroup, operatorName, complete, createTime, updateTime, businessId, businessName)"
+							+ "VALUES(?, ?, ?, ?, ?, ?, 0, CURRENT_TIME(), CURRENT_TIME(), ?, ?)");
+					stmt.setString(1, activity.getId());
+					stmt.setString(2, activity.getFlow());
+					stmt.setString(3, activity.getNode());
+					stmt.setString(4, activity.getOperatorId());
+					stmt.setString(5, activity.getOperatorGorup());
+					stmt.setString(6, activity.getOperatorName());
+					stmt.setString(7, activity.getBusinessId());
+					stmt.setString(8, activity.getBusinessName());
+					if(stmt.executeUpdate() == 0) {
+						throw new FlowException("Create activity error.");
+					}
+					activities.add(activity);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				} finally {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+			return activities;
+		} else {
+			return null;
 		}
 	}
 	
@@ -200,12 +284,56 @@ public class FlowEngine {
 		}
 	}
 	
-	private boolean completeActivity(String activityId, String operatorId, String operatorName) {
+	private boolean completeActivity(String nodeKey, String operatorId, String operatorName) {
 		Connection connection = h2Engine.getConnection();
 		try {
-			PreparedStatement stmt = connection.prepareStatement("UPDATE ACTIVITY SET complete = 1, updateTime = CURRENT_TIME() WHERE id = ?");
-			stmt.setString(1, activityId);
+			PreparedStatement stmt = connection.prepareStatement("UPDATE ACTIVITY SET complete = 1, updateTime = CURRENT_TIME() WHERE node = ?");
+			stmt.setString(1, nodeKey);
 			return stmt.executeUpdate() > 0;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	private void join(Node gateway, Node joinedNode) {
+		Connection connection = h2Engine.getConnection();
+		try {
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO JOINED_NODE(gateway, joinedNode) VALUES(?, ?");
+			stmt.setString(1, gateway.getKey());
+			stmt.setString(2, joinedNode.getKey());
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	private boolean isJoined(Node gateway) {
+		String[] nodes = gateway.getExpression().split(",");
+		if (nodes == null || nodes.length == 0) {
+			return false;
+		}
+		Connection connection = h2Engine.getConnection();
+		Set<String> joinedNodes = new HashSet<>();
+		try {
+			PreparedStatement stmt = connection.prepareStatement("SELECT node FROM JOINED_NODE WHERE gateway = ?");
+			stmt.setString(1, gateway.getKey());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				joinedNodes.add(rs.getString("joinedNode"));
+			}
+			return nodes.length == joinedNodes.size();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
