@@ -1,8 +1,9 @@
-package me.hipoplar.flow.sample;
+package me.hipoplar.flow;
 
 import java.util.List;
 import java.util.UUID;
 
+import junit.framework.TestCase;
 import me.hipoplar.flow.Activity;
 import me.hipoplar.flow.Expression;
 import me.hipoplar.flow.Flow;
@@ -14,8 +15,8 @@ import me.hipoplar.flow.Path;
 import me.hipoplar.flow.simple.SimpleDataBaseEngine;
 import me.hipoplar.flow.simple.SimpleFlowEngine;
 
-public class PaymentApp {
-	public static void main(String[] args) {
+public class PaymentTest extends TestCase {
+	public void test() {
 		/* =====================================================================================================*/
 		System.out.println("Defining flow...");
 		Flow flow = new Flow();

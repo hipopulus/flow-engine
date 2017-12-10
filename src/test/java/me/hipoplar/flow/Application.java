@@ -1,4 +1,4 @@
-package me.hipoplar.flow.sample;
+package me.hipoplar.flow;
 
 public class Application {
 	private String id;
