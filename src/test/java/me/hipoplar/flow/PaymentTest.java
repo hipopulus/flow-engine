@@ -4,12 +4,19 @@ import java.util.List;
 import java.util.UUID;
 
 import junit.framework.TestCase;
+import me.hipoplar.flow.api.ActivityService;
+import me.hipoplar.flow.api.DatabaseEngine;
+import me.hipoplar.flow.api.FlowService;
+import me.hipoplar.flow.api.GatewayService;
 import me.hipoplar.flow.model.Activity;
 import me.hipoplar.flow.model.Flow;
 import me.hipoplar.flow.model.Node;
 import me.hipoplar.flow.model.Operator;
 import me.hipoplar.flow.model.Path;
+import me.hipoplar.flow.simple.SimpleActivityService;
 import me.hipoplar.flow.simple.SimpleDataBaseEngine;
+import me.hipoplar.flow.simple.SimpleFlowService;
+import me.hipoplar.flow.simple.SimpleGatewayService;
 
 public class PaymentTest extends TestCase {
 	public void test() {
@@ -62,7 +69,11 @@ public class PaymentTest extends TestCase {
 		/* =====================================================================================================*/
 		
 		// Create engine
-		FlowEngine flowEngine = FlowEngine.createEngine(new SimpleDataBaseEngine());
+		DatabaseEngine databaseEngine = new SimpleDataBaseEngine();
+		FlowService flowService = new SimpleFlowService(databaseEngine);
+		ActivityService activityService = new SimpleActivityService(databaseEngine);
+		GatewayService gatewayService = new SimpleGatewayService(databaseEngine);
+		FlowEngine flowEngine = new FlowEngine(flowService, activityService, gatewayService);
 		// Create flow
 		Flow instance = flowEngine.instance(flow, "A Payment Sample");
 		System.out.println(instance);

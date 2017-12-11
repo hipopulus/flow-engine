@@ -11,30 +11,22 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import me.hipoplar.flow.api.ActivityService;
-import me.hipoplar.flow.api.DatabaseEngine;
 import me.hipoplar.flow.api.FlowService;
 import me.hipoplar.flow.api.GatewayService;
 import me.hipoplar.flow.model.Activity;
 import me.hipoplar.flow.model.Flow;
 import me.hipoplar.flow.model.FlowDef;
 import me.hipoplar.flow.model.Node;
-import me.hipoplar.flow.simple.SimpleActivityService;
-import me.hipoplar.flow.simple.SimpleFlowService;
-import me.hipoplar.flow.simple.SimpleGatewayService;
 
 public class FlowEngine {
-	protected FlowService flowDefService;
+	protected FlowService flowService;
 	protected ActivityService activityService;
 	protected GatewayService gatewayService;
-	private FlowEngine(DatabaseEngine databaseEngine) {
+	public FlowEngine(FlowService flowService, ActivityService activityService, GatewayService gatewayService) {
 		super();
-		this.flowDefService = new SimpleFlowService(databaseEngine);
-		this.activityService = new SimpleActivityService(databaseEngine);
-		this.gatewayService = new SimpleGatewayService(databaseEngine);
-	}
-	
-	public static FlowEngine createEngine(DatabaseEngine databaseEngine) {
-		return new FlowEngine(databaseEngine);
+		this.flowService = flowService;
+		this.activityService = activityService;
+		this.gatewayService = gatewayService;
 	}
 	
 	public final Flow instance(String definitionKey, String name) {
@@ -47,7 +39,7 @@ public class FlowEngine {
 		}
 		flow.setKey(UUID.randomUUID().toString());
 		flow.setInstantial(true);
-		getFlowDefService().createFLow(flow, toXml(flow));
+		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
 	}
 	
@@ -58,7 +50,7 @@ public class FlowEngine {
 		flow.setName(name);
 		flow.setKey(UUID.randomUUID().toString());
 		flow.setInstantial(true);
-		getFlowDefService().createFLow(flow, toXml(flow));
+		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
 	}
 	
@@ -68,7 +60,7 @@ public class FlowEngine {
 		}
 		flow.setKey(UUID.randomUUID().toString());
 		flow.setInstantial(false);
-		getFlowDefService().createFLow(flow, toXml(flow));
+		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
 	}
 
@@ -76,7 +68,7 @@ public class FlowEngine {
 		if (key == null || key.trim().length() == 0) {
 			throw new FlowException("Flow key not specified.");
 		}
-		FlowDef flowDef = getFlowDefService().getFlow(key);
+		FlowDef flowDef = getFlowService().getFlow(key);
 		Flow flow = null;
 		if(flowDef != null) {
 			flow = toJavaObject(flowDef.getFlowxml());
@@ -196,8 +188,8 @@ public class FlowEngine {
 	}
 	
 
-	protected FlowService getFlowDefService() {
-		return flowDefService;
+	protected FlowService getFlowService() {
+		return flowService;
 	}
 
 	public ActivityService getActivityService() {
