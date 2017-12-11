@@ -2,13 +2,14 @@ package me.hipoplar.flow.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import me.hipoplar.flow.IdGenerator;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "flow")
@@ -49,8 +50,10 @@ public class Flow {
 	}
 	
 	public Node addNode(String name, int type) {
-		Node node = new Node(type, UUID.randomUUID().toString(), name, null);
-		if(nodes == null) nodes = new ArrayList<>();
+		Node node = new Node(type, IdGenerator.instance().nextId(), name, null);
+		if(nodes == null) {
+			nodes = new ArrayList<>();
+		}
 		nodes.add(node);
 		return node;
 	}
@@ -60,7 +63,9 @@ public class Flow {
 		Path path = new Path(from, to);
 		if(n1.getType() != Node.NODE_TYPE_GATEWAY_EXCLUSIVE) {
 			n1.setExpression(to);
-			if(paths == null) paths = new ArrayList<>();
+			if(paths == null) {
+				paths = new ArrayList<>();
+			}
 			paths.add(path);
 		}
 		return path;
@@ -74,7 +79,9 @@ public class Flow {
 			Path path = new Path(from, to);
 			pathList.add(path);
 		}
-		if(paths == null) paths = new ArrayList<>();
+		if(paths == null) {
+			paths = new ArrayList<>();
+		}
 		paths.addAll(pathList);
 		return pathList;
 	}
@@ -87,7 +94,9 @@ public class Flow {
 			Path path = new Path(from, to);
 			pathList.add(path);
 		}
-		if(paths == null) paths = new ArrayList<>();
+		if(paths == null) {
+			paths = new ArrayList<>();
+		}
 		paths.addAll(pathList);
 		return pathList;
 	}
@@ -98,7 +107,9 @@ public class Flow {
 			Path path = direct(from, to);
 			pathList.add(path);
 		}
-		if(paths == null) paths = new ArrayList<>();
+		if(paths == null) {
+			paths = new ArrayList<>();
+		}
 		paths.addAll(pathList);
 		return pathList;
 	}

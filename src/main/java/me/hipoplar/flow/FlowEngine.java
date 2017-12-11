@@ -3,7 +3,6 @@ package me.hipoplar.flow;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -37,7 +36,7 @@ public class FlowEngine {
 		if(flow == null) {
 			throw new FlowException("Flow definition not found.");
 		}
-		flow.setKey(UUID.randomUUID().toString());
+		flow.setKey(IdGenerator.instance().nextId());
 		flow.setInstantial(true);
 		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
@@ -48,7 +47,7 @@ public class FlowEngine {
 			throw new FlowException("Flow name not specified.");
 		}
 		flow.setName(name);
-		flow.setKey(UUID.randomUUID().toString());
+		flow.setKey(IdGenerator.instance().nextId());
 		flow.setInstantial(true);
 		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
@@ -58,7 +57,7 @@ public class FlowEngine {
 		if (flow.getName() == null || flow.getName().trim().length() == 0) {
 			throw new FlowException("Flow name not specified.");
 		}
-		flow.setKey(UUID.randomUUID().toString());
+		flow.setKey(IdGenerator.instance().nextId());
 		flow.setInstantial(false);
 		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
