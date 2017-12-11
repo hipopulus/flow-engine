@@ -101,7 +101,7 @@ public class FlowEngine {
 	}
 
 	public final void process(String activityId, FlowContext<?> context) {
-		Activity activity = getActivityService().getActivity(activityId);
+		Activity activity = getActivityService().get(activityId);
 		if(activity == null) {
 			throw new FlowException("Activity not found.");
 		}
@@ -119,7 +119,7 @@ public class FlowEngine {
 				return;
 			}
 		}
-		if(!getActivityService().completeActivity(node.getKey(), context.getOperator().getOperatorId(), context.getOperator().getOperatorName())) {
+		if(!getActivityService().complete(node.getKey(), context.getOperator().getOperatorId(), context.getOperator().getOperatorName())) {
 			throw new FlowException("Complete activity error.");
 		}
 		for (String nextNodeKey : nextNodes) {
@@ -152,7 +152,7 @@ public class FlowEngine {
 			}
 			break;
 		case Node.NODE_TYPE_TASK:
-			getActivityService().createNodeActivity(flow, to);
+			getActivityService().createNodeActivities(flow, to);
 			break;
 		default:
 			break;

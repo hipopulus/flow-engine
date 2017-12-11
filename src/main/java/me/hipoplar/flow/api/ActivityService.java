@@ -8,8 +8,8 @@ import me.hipoplar.flow.model.Node;
 
 @SPI
 public interface ActivityService {
-	Activity getActivity(String activityId);
-	List<Activity> createNodeActivity(Flow flow, Node node);
-	boolean completeActivity(String nodeKey, String operatorId, String operatorName);
+	Activity get(String activityId);
+	List<Activity> createNodeActivities(Flow flow, Node node);
+	boolean complete(String nodeKey, String operatorId, String operatorName);
 	List<Activity> getFlowActivities(String flow, String operatorId);
 }

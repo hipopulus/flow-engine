@@ -27,7 +27,7 @@ public class SimpleActivityService implements ActivityService {
 	}
 
 	@Override
-	public Activity getActivity(String activityId) {
+	public Activity get(String activityId) {
 		if (activityId == null || activityId.trim().length() == 0) {
 			throw new FlowException("Node key not specified.");
 		}
@@ -108,7 +108,7 @@ public class SimpleActivityService implements ActivityService {
 	}
 	
 	@Override
-	public List<Activity> createNodeActivity(Flow flow, Node node) {
+	public List<Activity> createNodeActivities(Flow flow, Node node) {
 		if(node.getType() == Node.NODE_TYPE_TASK) {
 			List<Activity> activities = new ArrayList<>();
 			for (Operator operator : node.getOperators()) {
@@ -157,7 +157,7 @@ public class SimpleActivityService implements ActivityService {
 	}
 	
 	@Override
-	public boolean completeActivity(String nodeKey, String operatorId, String operatorName) {
+	public boolean complete(String nodeKey, String operatorId, String operatorName) {
 		Connection connection = databaseEngine.getConnection();
 		try {
 			PreparedStatement stmt = connection.prepareStatement("UPDATE ACTIVITY SET complete = 1, updateTime = CURRENT_TIME() WHERE node = ?");
