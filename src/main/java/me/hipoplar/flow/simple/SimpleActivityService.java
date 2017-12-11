@@ -26,6 +26,7 @@ public class SimpleActivityService implements ActivityService {
 		this.databaseEngine = databaseEngine;
 	}
 
+	@Override
 	public Activity getActivity(String activityId) {
 		if (activityId == null || activityId.trim().length() == 0) {
 			throw new FlowException("Node key not specified.");
@@ -63,6 +64,7 @@ public class SimpleActivityService implements ActivityService {
 		}
 	}
 	
+	@Override
 	public List<Activity> getFlowActivities(String flow, String operatorId) {
 		if (flow == null || flow.trim().length() == 0) {
 			throw new FlowException("Flow name not specified.");
@@ -105,6 +107,7 @@ public class SimpleActivityService implements ActivityService {
 		}
 	}
 	
+	@Override
 	public List<Activity> createNodeActivity(Flow flow, Node node) {
 		if(node.getType() == Node.NODE_TYPE_TASK) {
 			List<Activity> activities = new ArrayList<>();
@@ -153,6 +156,7 @@ public class SimpleActivityService implements ActivityService {
 		}
 	}
 	
+	@Override
 	public boolean completeActivity(String nodeKey, String operatorId, String operatorName) {
 		Connection connection = databaseEngine.getConnection();
 		try {

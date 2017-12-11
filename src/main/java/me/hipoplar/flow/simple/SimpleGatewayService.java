@@ -20,6 +20,7 @@ public class SimpleGatewayService implements GatewayService {
 		this.databaseEngine = databaseEngine;
 	}
 
+	@Override
 	public void join(Node gateway, Node joinedNode) {
 		Connection connection = databaseEngine.getConnection();
 		try {
@@ -38,6 +39,7 @@ public class SimpleGatewayService implements GatewayService {
 		}
 	}
 	
+	@Override
 	public boolean isJoined(Node gateway) {
 		String[] nodes = gateway.getExpression().split(",");
 		if (nodes == null || nodes.length == 0) {
