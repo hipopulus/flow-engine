@@ -6,10 +6,16 @@ import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import me.hipoplar.flow.FlowContext;
 import me.hipoplar.flow.FlowException;
-
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "node")
 public class Node {
 	public final static int NODE_TYPE_START = 0;
 	public final static int NODE_TYPE_TASK = 1;
@@ -18,10 +24,13 @@ public class Node {
 	public final static int NODE_TYPE_GATEWAY_JOIN = 5;
 	public final static int NODE_TYPE_END = 6;
 	
+	@XmlAttribute(name = "id")
 	private String key;
 	private String name;
 	private String expression;
+	@XmlAttribute(name = "type")
 	private Integer type;
+	@XmlElement(name = "operator")
 	private List<Operator> operators;
 
 	public Node() {
@@ -45,8 +54,9 @@ public class Node {
 		operator.setOperatorId(operatorId);
 		operator.setOperatorName(operatorName);
 		operator.setGroup(operatorGroup);
-		operator.setNode(key);
-		if(operators == null) operators = new ArrayList<>();
+		if(operators == null) {
+			operators = new ArrayList<>();
+		}
 		operators.add(operator);
 	}
 

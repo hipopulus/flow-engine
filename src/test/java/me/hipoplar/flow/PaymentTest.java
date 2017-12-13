@@ -12,7 +12,6 @@ import me.hipoplar.flow.model.Activity;
 import me.hipoplar.flow.model.Flow;
 import me.hipoplar.flow.model.Node;
 import me.hipoplar.flow.model.Operator;
-import me.hipoplar.flow.model.Path;
 import me.hipoplar.flow.simple.SimpleActivityService;
 import me.hipoplar.flow.simple.SimpleDataBaseEngine;
 import me.hipoplar.flow.simple.SimpleFlowService;
@@ -76,14 +75,8 @@ public class PaymentTest extends TestCase {
 		FlowEngine flowEngine = new FlowEngine(flowService, activityService, gatewayService);
 		// Create flow
 		Flow instance = flowEngine.instance(flow, "A Payment Sample");
-		System.out.println(instance);
-		for (Node node : instance.getNodes()) {
-			System.out.println(node);
-		}
-
-		for (Path path : instance.getPaths()) {
-			System.out.println(path);
-		}
+		String flowxml = flowService.getFlow(instance.getKey()).getFlowxml();
+		System.out.println("Flow: \n" + flowxml);
 		System.out.println("====================================================================================");
 		// Prepare application form
 		System.out.println("Preparing application form...");

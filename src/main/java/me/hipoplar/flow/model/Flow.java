@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -13,16 +14,18 @@ import me.hipoplar.flow.IdGenerator;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "flow")
-@XmlType(propOrder = { "key", "name", "nodes", "paths", "businessId", "businessName", "status", "instantial" })
+@XmlType(propOrder = { "key", "name", "instantial", "businessId", "businessName", "status", "nodes", "paths" })
 public class Flow {
 	public final static int FLOW_SATUS_INIT = 0;
 	public final static int FLOW_SATUS_PROCESSING = 1;
 	public final static int FLOW_SATUS_COMPLETE = 2;
 	
+	@XmlAttribute(name = "id")
 	private String key;
 	private String name;
 	@XmlElement(name = "node")
 	private List<Node> nodes;
+	@XmlElement(name = "path")
 	private List<Path> paths;
 	private String businessId;
 	private String businessName;

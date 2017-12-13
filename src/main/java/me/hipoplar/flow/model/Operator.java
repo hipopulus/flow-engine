@@ -6,16 +6,9 @@ public class Operator {
 	public final static String GROUP_CORPORATE = "CORPORATE";
 	public final static String GROUP_DEPARTMENT = "DEPARTMENT";
 	
-	private String node;
 	private String operatorId;
 	private String operatorName;
 	private String group;
-	public String getNode() {
-		return node;
-	}
-	public void setNode(String node) {
-		this.node = node;
-	}
 	public String getOperatorId() {
 		return operatorId;
 	}
