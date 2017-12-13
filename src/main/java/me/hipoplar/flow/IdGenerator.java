@@ -6,8 +6,8 @@ public class IdGenerator {
 
 	private static IdGenerator generator;
 
-	public static final String WORKER_ID_PROP = "qiyuesuo.worker.id";
-	public static final String DATACENTER_ID_PROP = "qiyuesuo.flow.id";
+	public static final String WORKER_ID_PROP = "flow.worker.id";
+	public static final String DATACENTER_ID_PROP = "flow.datacenter.id";
 
 	private long sequence = 0L;
 	private long epoch = 30 * 365 * 24 * 3600000L; // 时间纪元 2000-01-01 00:00 00
