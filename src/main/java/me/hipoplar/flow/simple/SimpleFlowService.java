@@ -23,7 +23,7 @@ public class SimpleFlowService implements FlowService {
 	public FlowDef createFLow(Flow flow, String flowxml) {
 		Connection connection = databaseEngine.getConnection();
 		try {
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO FLOW(key, name, flowxml, businessId, businessName, status, instantial) VALUES(?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO FLOW(key, name, flowxml, businessId, businessName, status) VALUES(?, ?, ?, ?, ?, ?)");
 			FlowDef flowDef = new FlowDef();
 			flowDef.setKey(flow.getKey());
 			flowDef.setName(flow.getName());
@@ -31,15 +31,13 @@ public class SimpleFlowService implements FlowService {
 			flowDef.setBusinessName(flow.getBusinessName());
 			flowDef.setStatus(flow.getStatus());
 			flowDef.setFlowxml(flowxml);
-			flowDef.setInstantial(flow.getInstantial());
 			
 			stmt.setString(1, flowDef.getKey());
 			stmt.setString(2, flowDef.getName());
 			stmt.setString(3, flowxml);
 			stmt.setString(4, flowDef.getBusinessId());
 			stmt.setString(5, flowDef.getBusinessName());
-			stmt.setInt(6, Flow.FLOW_SATUS_INIT);
-			stmt.setBoolean(7, flowDef.getInstantial());
+			stmt.setInt(6, flowDef.getStatus());
 			stmt.execute();
 			return flowDef;
 		} catch (Exception e) {
@@ -72,7 +70,6 @@ public class SimpleFlowService implements FlowService {
 				flow.setBusinessName(rs.getString("businessName"));
 				flow.setStatus(rs.getInt("status"));
 				flow.setFlowxml(rs.getString("flowxml"));
-				flow.setInstantial(rs.getBoolean("instantial"));
 				break;
 			}
 			return flow;

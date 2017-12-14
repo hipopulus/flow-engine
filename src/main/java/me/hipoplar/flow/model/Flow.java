@@ -14,23 +14,23 @@ import me.hipoplar.flow.IdGenerator;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "flow")
-@XmlType(propOrder = { "key", "name", "instantial", "businessId", "businessName", "status", "nodes", "paths" })
+@XmlType(propOrder = { "key", "name", "status", "businessId", "businessName", "nodes", "paths" })
 public class Flow {
-	public final static int FLOW_SATUS_INIT = 0;
-	public final static int FLOW_SATUS_PROCESSING = 1;
-	public final static int FLOW_SATUS_COMPLETE = 2;
+	public final static int FLOW_SATUS_DEFINED = 0;
+	public final static int FLOW_SATUS_INSTANTIAL = 1;
+	public final static int FLOW_SATUS_PROCESSING = 2;
+	public final static int FLOW_SATUS_COMPLETE = 3;
 	
 	@XmlAttribute(name = "id")
 	private String key;
 	private String name;
+	private Integer status;
+	private String businessId;
+	private String businessName;
 	@XmlElement(name = "node")
 	private List<Node> nodes;
 	@XmlElement(name = "path")
 	private List<Path> paths;
-	private String businessId;
-	private String businessName;
-	private Integer status;
-	private Boolean instantial;
 
 	@Override
 	public String toString() {
@@ -42,7 +42,7 @@ public class Flow {
 	public static Flow create(String flowName) {
 		Flow flow = new Flow();
 		flow.setName(flowName);
-		flow.setStatus(Flow.FLOW_SATUS_INIT);
+		flow.setStatus(Flow.FLOW_SATUS_DEFINED);
 		return flow;
 	}
 	
@@ -196,13 +196,5 @@ public class Flow {
 
 	public void setKey(String key) {
 		this.key = key;
-	}
-
-	public Boolean getInstantial() {
-		return instantial;
-	}
-
-	public void setInstantial(Boolean instantial) {
-		this.instantial = instantial;
 	}
 }

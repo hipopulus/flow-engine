@@ -4,11 +4,11 @@ public class FlowDef {
 
 	private String key;
 	private String name;
+	private Integer status;
+	private Integer lastNodeIndex;
 	private String businessId;
 	private String businessName;
-	private Integer status;
 	private String flowxml;
-	private Boolean instantial;
 	public String getKey() {
 		return key;
 	}
@@ -45,10 +45,10 @@ public class FlowDef {
 	public void setFlowxml(String flowxml) {
 		this.flowxml = flowxml;
 	}
-	public Boolean getInstantial() {
-		return instantial;
+	public Integer getLastNodeIndex() {
+		return lastNodeIndex;
 	}
-	public void setInstantial(Boolean instantial) {
-		this.instantial = instantial;
+	public void setLastNodeIndex(Integer lastNodeIndex) {
+		this.lastNodeIndex = lastNodeIndex;
 	}
 }

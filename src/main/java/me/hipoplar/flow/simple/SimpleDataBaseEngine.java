@@ -16,7 +16,7 @@ public class SimpleDataBaseEngine implements DatabaseEngine {
 			PreparedStatement createTable = connection.prepareStatement(
 					// FLOW
 					"DROP TABLE IF EXISTS FLOW; "
-					+ "CREATE TABLE FLOW(key VARCHAR(255) PRIMARY KEY, name VARCHAR(255), flowxml CLOB, businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT, instantial TINYINT);"
+					+ "CREATE TABLE FLOW(key VARCHAR(255) PRIMARY KEY, name VARCHAR(255), flowxml CLOB, businessId VARCHAR(255), businessName VARCHAR(255), status TINYINT, lastNodeIndex INT);"
 					// JOINED_NODE
 					+ "DROP TABLE IF EXISTS JOINED_NODE; "
 					+ "CREATE TABLE JOINED_NODE(gateway VARCHAR(255), joinedNode VARCHAR(255));"

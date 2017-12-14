@@ -37,7 +37,7 @@ public class FlowEngine {
 			throw new FlowException("Flow definition not found.");
 		}
 		flow.setKey(IdGenerator.instance().nextId());
-		flow.setInstantial(true);
+		flow.setStatus(Flow.FLOW_SATUS_INSTANTIAL);
 		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
 	}
@@ -48,7 +48,7 @@ public class FlowEngine {
 		}
 		flow.setName(name);
 		flow.setKey(IdGenerator.instance().nextId());
-		flow.setInstantial(true);
+		flow.setStatus(Flow.FLOW_SATUS_INSTANTIAL);
 		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
 	}
@@ -58,7 +58,7 @@ public class FlowEngine {
 			throw new FlowException("Flow name not specified.");
 		}
 		flow.setKey(IdGenerator.instance().nextId());
-		flow.setInstantial(false);
+		flow.setStatus(Flow.FLOW_SATUS_DEFINED);
 		getFlowService().createFLow(flow, toXml(flow));
 		return flow;
 	}
